@@ -34,15 +34,21 @@ export default function Home() {
 
       const data = await response.json();
 
-      if (data.status === "success") {
-        setMessage(`${data.title} - ${data.message}`);
-        setDownloadUrl(data.download_url);
-      } else {
-        setMessage(`Error: ${data.message}`);
+      if (!response.ok || data.status !== "success") {
+        throw new Error(
+          data.message ||
+            "Imeshindikana kupakua video. Tafadhali jaribu tena."
+        );
       }
+
+      setMessage(`${data.title} - ${data.message}`);
+      setDownloadUrl(data.download_url);
     } catch (error) {
-      console.error(error);
-      setMessage("Imeshindikana kuwasiliana na server");
+      setMessage(
+        error instanceof Error
+          ? error.message
+          : "Imeshindikana kuwasiliana na server."
+      );
     } finally {
       setLoading(false);
     }
@@ -51,7 +57,6 @@ export default function Home() {
   return (
     <main className="min-h-screen bg-gray-100 flex items-center justify-center px-4 py-10">
       <div className="w-full max-w-xl rounded-3xl bg-white p-6 shadow-2xl sm:p-10">
-
         {/* Header */}
         <div className="text-center">
           <div className="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-2xl bg-black text-3xl text-white">
@@ -75,6 +80,11 @@ export default function Home() {
             className="w-full rounded-2xl border border-gray-300 bg-gray-50 p-4 text-gray-900 outline-none transition focus:border-black focus:bg-white focus:ring-2 focus:ring-gray-200"
             value={url}
             onChange={(e) => setUrl(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" && !loading) {
+                downloadVideo();
+              }
+            }}
           />
 
           <button
@@ -111,19 +121,19 @@ export default function Home() {
           </h2>
 
           <div className="mt-4 grid grid-cols-2 gap-3">
-            <div className="rounded-xl bg-gray-100 p-4 text-center font-medium">
+            <div className="rounded-xl bg-gray-100 p-4 text-center font-medium text-gray-800">
               YouTube
             </div>
 
-            <div className="rounded-xl bg-gray-100 p-4 text-center font-medium">
+            <div className="rounded-xl bg-gray-100 p-4 text-center font-medium text-gray-800">
               TikTok
             </div>
 
-            <div className="rounded-xl bg-gray-100 p-4 text-center font-medium">
+            <div className="rounded-xl bg-gray-100 p-4 text-center font-medium text-gray-800">
               Instagram
             </div>
 
-            <div className="rounded-xl bg-gray-100 p-4 text-center font-medium">
+            <div className="rounded-xl bg-gray-100 p-4 text-center font-medium text-gray-800">
               Facebook
             </div>
           </div>
@@ -133,7 +143,6 @@ export default function Home() {
         <p className="mt-8 text-center text-xs text-gray-400">
           Tumia video ambazo una ruhusa ya ku-download.
         </p>
-
       </div>
     </main>
   );
