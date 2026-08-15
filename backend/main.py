@@ -72,9 +72,23 @@ def download_video(
 
 
     options = {
-        "format": "best",
-        "outtmpl": f"{DOWNLOAD_FOLDER}/%(title)s.%(ext)s",
+    "format": "best",
+    "outtmpl": f"{DOWNLOAD_FOLDER}/%(title)s.%(ext)s",
+    "quiet": True,
+    "noplaylist": True,
+    "http_headers": {
+        "User-Agent": (
+            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+            "AppleWebKit/537.36 (KHTML, like Gecko) "
+            "Chrome/138.0.0.0 Safari/537.36"
+        )
+    },
+    "extractor_args": {
+        "youtube": {
+            "player_client": ["android"]
+        }
     }
+}
 
 
     try:
